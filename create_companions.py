@@ -72,19 +72,20 @@ options = {
 }
 for row_index, row in enumerate(rows):
     for column_index, column in enumerate(columns):
+        well = plate.add_well(row, column)
         for field_index, field in enumerate(fields):
+            image = Image(basename, 2080, 1552, 25, 3, 1, order="XYZTC", type="uint8")
+            well.add_wellsample(well_index, image)
+            well_index += 1
             for channel_index, channel in enumerate(channels):
                 for plane_index, plane in enumerate(planes):
-                    well = plate.add_well(row, column)
                     tiff_file = "r{}c{}f{}p{}-ch{}sk1fk1fl1.tiff".format(row, column, field, plane, channel) 
                     if tiff_file in filenames:
                         basename = "{}{}".format(row, column)
-                        image = Image(basename, 2080, 1552, 25, 3, 1, order="XYZTC", type="uint8")
-                        image.add_channel(samplesPerPixel=1)
+                        image.add_channel("0")
                         image.add_tiff(tiff_file, c=0, z=plane_index+1, t=0, planeCount=21)
-                        image.add_plane(c=0, z=plane_index+1, t=0, options = options)
-                        well.add_wellsample(well_index, image)
-                        well_index += 1
+                       # image.add_plane(c=0, z=plane_index+1, t=0, options = options)
+
                         
     
 companion_file = "{}.companion.ome".format(plate_name)
