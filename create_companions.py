@@ -99,5 +99,3 @@ proc = subprocess.Popen(
 (output, error_output) = proc.communicate()
 
 print("Done.")
-        
-    
