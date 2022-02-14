@@ -23,8 +23,8 @@
 #   r (01-08) = row
 #   c (01-12) = column
 #   f (01-09) = field
-#   p (01-21) = plane
-#   ch (1-4)  = channel
+#   p (01) = plane
+#   ch (1-5)  = channel
 #   sk, unknown
 #   fk, unknown
 #   fl, unknown
@@ -61,8 +61,8 @@ with open(list_of_tiff_files) as fp:
 columns = ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12', '13', '14', '15', '16', '17', '18','19', '20', '21']  
 rows = ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12', '13', '14', '15'] 
 fields = ['01', '02', '03', '04', '05', '06', '07', '08', '09']
-planes = ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12', '13', '14', '15', '16', '17', '18','19', '20', '21']  
-channels = ['1', '2', '3', '4']
+planes = ['01']  
+channels = ['1', '2', '3', '4', '5']
 timepoints = ['0h']
 print("Creating {}.companion.ome ...".format(plate_name))
 plate = Plate(plate_name, len(rows), len(columns)) 
@@ -74,17 +74,20 @@ for row_index, row in enumerate(rows):
     for column_index, column in enumerate(columns):
         well = plate.add_well(row, column)
         for field_index, field in enumerate(fields):
+            basename = "{}{}".format(row, column)
+            has_tiff_data = False
+            image = Image(basename, 2080, 1552, 1, 5, 1, order="XYZTC", type="uint8") #  SizeZ & SizeC should be set to 1 & 4, respectively
             for channel_index, channel in enumerate(channels):
-                basename = "{}{}".format(row, column)
-                image = Image(basename, 2080, 1552, 25, 3, 1, order="XYZTC", type="uint8")
                 for plane_index, plane in enumerate(planes):
                     tiff_file = "r{}c{}f{}p{}-ch{}sk1fk1fl1.tiff".format(row, column, field, plane, channel) 
                     if tiff_file in filenames:
+                        has_tiff_data = True
                         image.add_channel(samplesPerPixel=1)
-                        image.add_tiff(tiff_file, c=0, z=plane_index+1, t=0, planeCount=21)
+                        image.add_tiff(tiff_file, c=0, z=plane_index, t=0, planeCount=1)
                     #   image.add_plane(c=0, z=plane_index+1, t=0, options = options)
-            well.add_wellsample(well_index, image)
-            well_index += 1
+            if has_tiff_data:
+                well.add_wellsample(well_index, image)
+                well_index += 1
  
 companion_file = "{}.companion.ome".format(plate_name)
 create_companion(plates=[plate], out=companion_file)
