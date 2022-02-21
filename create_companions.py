@@ -83,7 +83,7 @@ for row_index, row in enumerate(rows):
                     if tiff_file in filenames:
                         has_tiff_data = True
                         image.add_channel(samplesPerPixel=1)
-                        image.add_tiff(tiff_file, c=0, z=plane_index, t=0, planeCount=1)
+                        image.add_tiff(tiff_file, c=channel_index, z=plane_index, t=0, planeCount=1)
                     #   image.add_plane(c=0, z=plane_index+1, t=0, options = options)
             if has_tiff_data:
                 well.add_wellsample(well_index, image)
