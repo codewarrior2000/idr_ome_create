@@ -76,7 +76,7 @@ for row_index, row in enumerate(rows):
         for field_index, field in enumerate(fields):
             basename = "{}{}".format(row, column)
             has_tiff_data = False
-            image = Image(basename, 2080, 1552, 1, 5, 1, order="XYZTC", type="uint8") #  SizeZ & SizeC should be set to 1 & 4, respectively
+            image = Image(basename, 2080, 1552, 1, 5, 1, order="XYZTC", type="uint16") #  SizeZ & SizeC should be set to 1 & 4, respectively
             for channel_index, channel in enumerate(channels):
                 for plane_index, plane in enumerate(planes):
                     tiff_file = "r{}c{}f{}p{}-ch{}sk1fk1fl1.tiff".format(row, column, field, plane, channel) 
